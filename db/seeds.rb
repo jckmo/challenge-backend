@@ -1,4 +1,4 @@
-User.create(username: 'Master', password: 1111, is_master?: true)
+User.create(username: 'Master', password: '1111', is_master?: true)
 
 @counter = 2
 

@@ -6,7 +6,9 @@ class TitlesController < ApplicationController
       @title.save  
       render json: @title
     else
-      @new_title = Title.create(title: params[:title][:Title], year: params[:title][:Year], poster: params[:title][:Poster], nominations: 1)
+      byebug
+      @new_title = Title.create(title: params[:title][:Title], year: params[:title][:Year], poster: params[:title][:Poster], nominations: 1, user_id: params[:userId])
+      # @new_title.save
       render json: @new_title
     end
   end

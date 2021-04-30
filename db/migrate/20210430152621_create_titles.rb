@@ -5,6 +5,7 @@ class CreateTitles < ActiveRecord::Migration[6.0]
       t.string :year
       t.string :poster
       t.integer :nominations
+      t.references :user, index: true, foreign_key: true
 
       t.timestamps
     end
