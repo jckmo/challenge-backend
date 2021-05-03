@@ -8,6 +8,6 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    session.clear
+    params[:id] = nil
   end
 end
