@@ -10,7 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_04_005140) do
+ActiveRecord::Schema.define(version: 2021_05_04_193805) do
+
+  create_table "nominations", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "title_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
   create_table "titles", force: :cascade do |t|
     t.string "title"
@@ -23,15 +30,6 @@ ActiveRecord::Schema.define(version: 2021_05_04_005140) do
     t.index ["user_id"], name: "index_titles_on_user_id"
   end
 
-  create_table "titles_users", id: false, force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "title_id", null: false
-    t.integer "users_id"
-    t.integer "titles_id"
-    t.index ["titles_id"], name: "index_titles_users_on_titles_id"
-    t.index ["users_id"], name: "index_titles_users_on_users_id"
-  end
-
   create_table "users", force: :cascade do |t|
     t.string "username"
     t.string "password_digest"
@@ -41,6 +39,4 @@ ActiveRecord::Schema.define(version: 2021_05_04_005140) do
   end
 
   add_foreign_key "titles", "users"
-  add_foreign_key "titles_users", "titles", column: "titles_id"
-  add_foreign_key "titles_users", "users", column: "users_id"
 end

@@ -38,6 +38,7 @@ end
 
 @movies1.each do |title|
   @master.titles.create(title: title[:title], year: title[:year], poster: title[:poster], nominations: title[:nominations])
+  
 end
 
 @movies2 = [
