@@ -1,18 +1,19 @@
 class NominationsController < ApplicationController
   def create
-    @title = Title.find_by(title: params[:title][:Title])
-    
-    if @title 
-      Nomination.create(user_id: params[:userId], title_id: @title.id).save
-      @nominations_for_title =  Nomination.select{|nomination| nomination.title_id == @title.id}
-      @title.nominations = @nominations_for_title.count
-      @title.save
+    @title = Title.find_by(title: params[:title][:title])
+    byebug
+    if @title
+      Nomination.create(title_id: @title.id, user_id: params[:userId])
       render json: @title
-    else 
-      @title = Title.create(title: params[:title][:Title], year: params[:title][:Year], poster: params[:title][:Poster], nominations: 0, user_id: params[:userId])
-      Nomination.create(user_id: params[:userId], title_id: @title.id)
-      render json: @title
+    else
+      @title = Title.create(title: params[:title][:Title], year: params[:title][:Year], poster: params[:title][:Poster])
+      Nomination.create(title_id: @title.id, user_id: params[:userId])
+      
+      # what is actually happening here
+      @title_to_fit_state = {title: @title}
+      render json: @title_to_fit_state
     end
+
   end
 
   def update
@@ -23,7 +24,7 @@ class NominationsController < ApplicationController
         @nominated_titles.push({title: title, times_nominated: @times_nominated})
       end
       render json: @nominated_titles
-    elsif params[:userId] != 0
+    else
       @current_user_nomination_ids = []
       Nomination.all.select{|nomination| nomination.user_id == params[:userId].to_i}.each do |indiv|
         @current_user_nomination_ids.push(indiv)
