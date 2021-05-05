@@ -35,4 +35,8 @@ class NominationsController < ApplicationController
       render json: @current_user_nominations
     end
   end
+
+  def destroy
+    @nomination = Nomination.find_by(title_id: Title.find_by(title: params[:title][:title])).destroy
+  end
 end
