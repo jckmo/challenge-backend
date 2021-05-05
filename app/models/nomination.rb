@@ -1,3 +1,4 @@
 class Nomination < ApplicationRecord
-  has_many :users, through: :titles
+  belongs_to :user
+  belongs_to :title
 end
