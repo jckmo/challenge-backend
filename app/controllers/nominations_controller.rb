@@ -1,7 +1,7 @@
 class NominationsController < ApplicationController
   def create
-    @title = Title.find_by(title: params[:title][:title])
-    byebug
+    @title = Title.find_by(title: params[:title][:Title])
+    
     if @title
       Nomination.create(title_id: @title.id, user_id: params[:userId])
       render json: @title
