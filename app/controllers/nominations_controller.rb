@@ -16,24 +16,23 @@ class NominationsController < ApplicationController
   end
 
   def update
-    @nominated_titles = []
-    Title.all.each do |title|
-      @times_nominated = Nomination.select{|ind| ind.title_id == title.id}.count
-      @nominated_titles.push({title: title, times_nominated: @times_nominated})
+    if params[:userId] == 0
+      @nominated_titles = []
+      Title.all.each do |title|
+        @times_nominated = Nomination.select{|ind| ind.title_id == title.id}.count
+        @nominated_titles.push({title: title, times_nominated: @times_nominated})
+      end
+      render json: @nominated_titles
+    elsif params[:userId] != 0
+      @current_user_nomination_ids = []
+      Nomination.all.select{|nomination| nomination.user_id == params[:userId].to_i}.each do |indiv|
+        @current_user_nomination_ids.push(indiv)
+      end
+      @current_user_nominations = []
+      @current_user_nomination_ids.each do |nom_id| 
+        @current_user_nominations.push(Title.find(nom_id.title_id))
+      end
+      render json: @current_user_nominations
     end
-
-    @current_user_nomination_ids = []
-    Nomination.all.select{|nomination| nomination.user_id == params[:userId].to_i}.each do |indiv|
-      @current_user_nomination_ids.push(indiv)
-    end
-
-    @current_user_nominations = []
-    @current_user_nomination_ids.each do |nom_id| 
-      @current_user_nominations.push(Title.find(nom_id.title_id))
-    end
-
-    @toBeRendered = {nominated_titles: @nominated_titles, current_user_nominations: @current_user_nominations}
-
-    render json: @toBeRendered
   end
 end
