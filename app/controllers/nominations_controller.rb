@@ -55,5 +55,25 @@ class NominationsController < ApplicationController
     elsif params[:source] == 'fromNoms'
       @nomination = Nomination.find_by(title_id: Title.find_by(title: params[:title][:title])).destroy
     end
+
+    @nominated_titles = []
+    @current_user_nomination_ids = []
+    @current_user_nominations = []
+
+    Title.all.each do |title|
+      @times_nominated = Nomination.select{|ind| ind.title_id == title.id}.count
+      @nominated_titles.push({title: title, times_nominated: @times_nominated})
+    end
+
+    Nomination.all.select{|nomination| nomination.user_id == params[:userId].to_i}.each do |indiv|
+      @current_user_nomination_ids.push(indiv)
+    end
+
+    @current_user_nomination_ids.each do |nom_id| 
+      @current_user_nominations.push(Title.find(nom_id.title_id))
+    end
+
+    @updated_nominations = {nominated_titles: @nominated_titles, current_user_nominations: @current_user_nominations}
+    render json: @updated_nominations
   end
 end
