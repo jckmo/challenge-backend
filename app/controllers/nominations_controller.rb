@@ -1,21 +1,32 @@
 class NominationsController < ApplicationController
   def create
-    @title = Title.find_by(title: params[:title][:Title])
-    
-    if @title
+
+    if params[:source] == 'fromSearch'
+      @title = Title.find_by(title: params[:title][:Title])
+      if @title
+        @times_nominated = Nomination.select{|ind| ind.title_id == @title.id}.count
+        @title_to_fit_state = {title: @title, times_nominated: @times_nominated}
+
+        render json: @title_to_fit_state
+      else
+        @title = Title.create(title: params[:title][:Title], year: params[:title][:Year], poster: params[:title][:Poster])
+        Nomination.create(title_id: @title.id, user_id: params[:userId])
+        @times_nominated = Nomination.select{|ind| ind.title_id == @title.id}.count
+        @title_to_fit_state = {title: @title, times_nominated: @times_nominated}
+
+        render json: @title_to_fit_state
+      end
+    elsif params[:source] == 'fromNoms'
+      @title = Title.find_by(title: params[:title][:title])
       Nomination.create(title_id: @title.id, user_id: params[:userId])
-      render json: @title
-    else
-      @title = Title.create(title: params[:title][:Title], year: params[:title][:Year], poster: params[:title][:Poster])
-      Nomination.create(title_id: @title.id, user_id: params[:userId])
-      
-      # what is actually happening here
-      @title_to_fit_state = {title: @title}
+      @times_nominated = Nomination.select{|ind| ind.title_id == @title.id}.count
+      @title_to_fit_state = {title: @title, times_nominated: @times_nominated}
+
       render json: @title_to_fit_state
     end
-
   end
 
+  # acts as index
   def update
     if params[:userId] == 0
       @nominated_titles = []
@@ -38,6 +49,11 @@ class NominationsController < ApplicationController
   end
 
   def destroy
-    @nomination = Nomination.find_by(title_id: Title.find_by(title: params[:title][:title])).destroy
+    # need to add source control
+    if params[:source] == 'fromSearch'
+      @nomination = Nomination.find_by(title_id: Title.find_by(title: params[:title][:Title])).destroy
+    elsif params[:source] == 'fromNoms'
+      @nomination = Nomination.find_by(title_id: Title.find_by(title: params[:title][:title])).destroy
+    end
   end
 end
